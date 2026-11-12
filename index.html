@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>圣诞故事排序游戏 · 共享版</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    min-height: 100vh;
+    background: linear-gradient(160deg, #0f2a4a 0%, #1b3a5c 50%, #2a4d6e 100%);
+    color: #f5f7fa;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 24px; text-align: center;
+  }
+  .snow { position: fixed; inset: 0; pointer-events: none; opacity: .5; }
+  h1 { font-size: 28px; margin-bottom: 6px; letter-spacing: 1px; }
+  p.sub { color: #b9c8da; margin-bottom: 32px; font-size: 15px; }
+  .cards { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
+  a.card {
+    width: 220px; padding: 28px 18px; border-radius: 18px; text-decoration: none;
+    background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.18);
+    color: #fff; transition: .2s; backdrop-filter: blur(6px);
+  }
+  a.card:hover { transform: translateY(-4px); background: rgba(255,255,255,.16); }
+  .emoji { font-size: 44px; display: block; margin-bottom: 12px; }
+  .title { font-size: 18px; font-weight: 600; }
+  .desc { font-size: 13px; color: #c3d2e3; margin-top: 8px; line-height: 1.5; }
+</style>
+</head>
+<body>
+  <h1>🎄 圣诞故事排序游戏</h1>
+  <p class="sub">Working Christmas Day · 把打乱的句子按时间线排好顺序</p>
+  <div class="cards">
+    <a class="card" href="student.html">
+      <span class="emoji">📱</span>
+      <span class="title">学生端</span>
+      <span class="desc">手机 / 平板打开<br>拖动卡片排出 1–8 的顺序</span>
+    </a>
+    <a class="card" href="teacher.html">
+      <span class="emoji">💻</span>
+      <span class="title">教师端</span>
+      <span class="desc">电脑打开<br>检查 / 显示答案 / 重置</span>
+    </a>
+  </div>
+</body>
+</html>
