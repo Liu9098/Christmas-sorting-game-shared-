@@ -54,7 +54,7 @@ body{
 #snow{position:absolute;inset:0;z-index:1;pointer-events:none}
 
 /* ---------- header ---------- */
-.hd{position:relative;z-index:3;padding:calc(10px + env(safe-area-inset-top)) 18px 6px;text-align:center;flex:0 0 auto}
+.hd{position:relative;z-index:3;padding:calc(20px + env(safe-area-inset-top)) 18px 6px;text-align:center;flex:0 0 auto}
 .hd h1{margin:0;font-family:Georgia,"Times New Roman",serif;font-weight:600;font-size:22px;line-height:1.15;letter-spacing:.3px;color:#fbf1dc;text-shadow:0 2px 14px rgba(0,0,0,.55)}
 .hd .sub{margin:4px 0 0;font-size:16px;letter-spacing:.9px;color:#bba98f;text-transform:uppercase}
 .barwrap{margin-top:8px;display:flex;align-items:center;justify-content:center;gap:9px}
@@ -65,10 +65,16 @@ body{
 
 /* ---------- panes ---------- */
 .panes{position:relative;z-index:3;flex:1 1 auto;min-height:0;display:flex;flex-direction:column;
-  padding:0 15px;gap:2px}
+  padding:6px 15px 0;gap:2px}
 .pane{display:flex;flex-direction:column;min-height:0}
-.pane.pool-pane{flex:1 1 44%}
-.pane.time-pane{flex:1 1 56%}
+.pane.pool-pane{flex:1 1 52%}
+.pane.time-pane{flex:1 1 48%}
+@media (max-height:720px){
+  .pane.pool-pane{flex:1 1 58%}
+  .pane.time-pane{flex:1 1 42%}
+  .zone-h{padding:4px 3px 4px}
+  .hd h1{font-size:20px}
+}
 .panes.all-placed .pool-pane{flex:0 0 auto}
 .panes.all-placed .time-pane{flex:1 1 auto}
 .zone-h{flex:0 0 auto;display:flex;align-items:baseline;justify-content:space-between;padding:6px 3px 6px}
@@ -133,7 +139,7 @@ body{
 @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-4px)}40%{transform:translateX(4px)}60%{transform:translateX(-2.5px)}80%{transform:translateX(2.5px)}}
 
 /* ---------- footer ---------- */
-.ft{position:relative;z-index:4;flex:0 0 auto;padding:7px 15px calc(9px + env(safe-area-inset-bottom));
+.ft{position:relative;z-index:4;flex:0 0 auto;padding:8px 15px calc(6px + env(safe-area-inset-bottom));
   display:flex;flex-direction:column;gap:6px}
 .btn{border:0;border-radius:12px;font-family:inherit;font-size:16px;font-weight:600;letter-spacing:.3px;
   padding:13px 16px;cursor:pointer;touch-action:manipulation;transition:transform .12s ease,box-shadow .18s ease}
@@ -142,6 +148,7 @@ body{
   box-shadow:0 6px 16px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.16)}
 .btn.ghost{color:#dfd1b7;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.14);
   font-size:16px;font-weight:500;padding:10px 16px;letter-spacing:.5px}
+.btn.hidden{display:none}
 
 /* ---------- hint pill ---------- */
 .pickhint{position:fixed;left:50%;bottom:calc(112px + env(safe-area-inset-bottom));transform:translate(-50%,10px);
@@ -182,6 +189,21 @@ body{
 .btnrow{display:flex;flex-direction:column;gap:7px}
 .sheet .btn.primary{width:100%}
 .sheet .btn.ghost{color:#3c342b;background:rgba(0,0,0,.05);border:1px solid rgba(0,0,0,.10)}
+/* ---------- 极矮小屏（360×640 等）：压缩内边距与字号，保证前 3 句完整可见 ---------- */
+@media (max-height:670px){
+  .hd{padding-top:calc(12px + env(safe-area-inset-top));padding-bottom:4px}
+  .hd h1{font-size:18px}
+  .hd .sub{font-size:13px;margin-top:2px;letter-spacing:.7px}
+  .barwrap{margin-top:5px}
+  .panes{padding-top:4px}
+  .zone-h{padding:3px 3px 3px}
+  .zone-h span,.zone-h em{font-size:14px}
+  .pool{gap:5px}
+  .card{padding:7px 9px 7px 7px;border-radius:11px}
+  .card p{font-size:14.5px;line-height:1.36}
+  .ft{padding-top:6px}
+  .btn{padding:11px 16px}
+}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.001s!important;transition-duration:.001s!important}}
 </style>
 </head>
@@ -217,8 +239,8 @@ body{
   </div>
 
   <footer class="ft">
+    <button class="btn ghost hidden" id="revealBtn">Show Correct Answer</button>
     <button class="btn primary" id="submit">Submit</button>
-    <button class="btn ghost" id="revealBtn">Show Correct Answer</button>
   </footer>
 
   <div class="pickhint" id="pickHint">Now tap a numbered slot</div>
@@ -256,6 +278,7 @@ body{
   var toastEl  = document.getElementById("toast");
   var maskEl   = document.getElementById("mask");
   var sheetEl  = document.getElementById("sheet");
+  var revealEl = document.getElementById("revealBtn");
 
   var order = [], slots = new Array(8).fill(null);
   var selected = null, wrong = {}, lastPlaced = -1;
@@ -355,6 +378,7 @@ body{
     for(var k=0;k<bad.length;k++) wrong[bad[k]] = true;
     render();
     toast("✅ 提交成功！");
+    if(revealEl) revealEl.classList.remove("hidden");
 
     if(bad.length === 0){
       openSheet(
@@ -410,6 +434,7 @@ body{
     order = shuffle();
     slots = new Array(8).fill(null);
     selected = null; wrong = {}; lastPlaced = -1;
+    if(revealEl) revealEl.classList.add("hidden");
     render();
     poolScr.scrollTop = 0; slotScr.scrollTop = 0;
   }
@@ -558,7 +583,7 @@ body{
   });
 
   document.getElementById("submit").addEventListener("click", submit);
-  document.getElementById("revealBtn").addEventListener("click", reveal);
+  if(revealEl) revealEl.addEventListener("click", reveal);
 
   /* ---------- snow ---------- */
   (function(){
